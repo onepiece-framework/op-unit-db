@@ -21,14 +21,66 @@
 class db extends OnePiece
 {
 	/**
+	 * Driver. (mysql, pgsql, sqlite)
+	 *
+	 * @var string
+	 */
+	private $_driver;
+
+	/**
 	 * PDO instance handle.
 	 *
-	 * @var PDOStatement
+	 * @var PDO
 	 */
-	private $_dbh;
+	private $_pdo;
+
+	/**
+	 * Stack execute queries.
+	 *
+	 * @var array
+	 */
+	private $_queries;
+
+	/**
+	 * Get quote character.
+	 *
+	 * @return array
+	 */
+	private function _get_quoter()
+	{
+		static $lf, $rg;
+		if( $lf and $rg ){
+			return [$lf, $rg];
+		}
+
+		//	...
+		switch( $this->_driver ){
+			case 'mysql':
+				$lf = $rg = '`';
+				break;
+		}
+
+		//	...
+		return [$lf, $rg];
+	}
+
+	/**
+	 * Quote key string.
+	 *
+	 * @param  string $val
+	 * @return string
+	 */
+	private function _quote($val)
+	{
+		list($lf, $rg) = $this->_get_quoter();
+		return "{$lf}{$val}{$rg}";
+	}
 
 	/**
 	 * Database connection.
+	 *
+	 * @param  array
+	 * @return boolean
 	 */
 	function Connect($args)
 	{
@@ -40,16 +92,96 @@ class db extends OnePiece
 		}
 
 		//	...
+		$this->_driver = $driver;
 		$dsn	 = "{$driver}:host={$host};dbname={$database}";
 		$options[PDO::MYSQL_ATTR_INIT_COMMAND] = "SET NAMES '{$charset}'";
 
 		//	...
 		try{
-			$this->_dbh = new PDO($dsn, $user, $password, $options);
+			$this->_queries[] = $dsn;
+			$this->_pdo = new PDO($dsn, $user, $password, $options);
 		}catch(PDOException $e){
 			Notice::Set($e->getMessage());
 		}
 
-		return $this->_dbh ? true: false;
+		//	...
+		return $this->_pdo ? true: false;
+	}
+
+	/**
+	 * Get database names.
+	 *
+	 * @return array
+	 */
+	function GetDatabase()
+	{
+		foreach($this->Query('SHOW DATABASES') as $record){
+			$result[] = $record['Database'];
+		}
+		return $result;
+	}
+
+	/**
+	 * Get table names.
+	 *
+	 * @param  string
+	 * @return array
+	 */
+	function GetTable($database)
+	{
+		$_database = $this->_quote($database);
+		foreach($this->Query("SHOW TABLES FROM {$_database}") as $record){
+			$result[] = $record['Tables_in_'.$database];
+		}
+		return $result;
+	}
+
+	/**
+	 * Execute sql query.
+	 *
+	 * @param  string $query
+	 * @param  string $type
+	 * @return boolean|integer|array
+	 */
+	function Query($query, $type=null)
+	{
+		//	...
+		if(!$this->_pdo){
+			Notice::Set("Has not been instantiate PDO.");
+			return false;
+		}
+
+		//	...
+		$this->_queries[] = $query;
+		if(!$statement = $this->_pdo->query($query)){
+			return false;
+		}
+
+		//	...
+		switch($type){
+			case 'alter':
+			case 'grant':
+			case 'create':
+				$result = true;
+				break;
+
+			case 'insert':
+				$this->_pdo->lastInsertId(/* $name is necessary at PGSQL */);
+				break;
+
+			case 'update':
+			case 'delete':
+				$result = $statement->rowCount();
+				break;
+
+			case 'count':
+				$result = $statement ->fetch(PDO::FETCH_ASSOC);
+				break;
+
+			default:
+				$result = $statement->fetchAll(PDO::FETCH_ASSOC);
+		}
+
+		return $result;
 	}
 }
