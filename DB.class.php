@@ -132,6 +132,7 @@ class db extends OnePiece
 	 */
 	function GetTable($database)
 	{
+		$result = [];
 		$_database = $this->Quote($database);
 		foreach($this->Query("SHOW TABLES FROM {$_database}") as $record){
 			$result[] = $record['Tables_in_'.$database];
