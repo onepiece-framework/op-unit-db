@@ -58,6 +58,9 @@ class db extends OnePiece
 			case 'mysql':
 				$lf = $rg = '`';
 				break;
+			default:
+				d("undefined driver. ({$this->_driver})");
+				break;
 		}
 
 		//	...
@@ -70,7 +73,7 @@ class db extends OnePiece
 	 * @param  string $val
 	 * @return string
 	 */
-	private function _quote($val)
+	function Quote($val)
 	{
 		list($lf, $rg) = $this->_get_quoter();
 		return "{$lf}{$val}{$rg}";
@@ -129,11 +132,16 @@ class db extends OnePiece
 	 */
 	function GetTable($database)
 	{
-		$_database = $this->_quote($database);
+		$_database = $this->Quote($database);
 		foreach($this->Query("SHOW TABLES FROM {$_database}") as $record){
 			$result[] = $record['Tables_in_'.$database];
 		}
 		return $result;
+	}
+
+	function GetPDO()
+	{
+		return $this->_pdo;
 	}
 
 	/**
