@@ -151,7 +151,7 @@ class db extends OnePiece
 	 * @param  string $query
 	 * @return boolean|integer|array
 	 */
-	function Query($query)
+	function Query($query, $type=null)
 	{
 		//	...
 		if(!$this->_pdo){
@@ -171,11 +171,19 @@ class db extends OnePiece
 		}
 
 		//	...
-		switch( $type = strtolower(substr($query, 0, strpos($query, ' '))) ){
-			case 'alter':
-			case 'grant':
-			case 'create':
-				$result = true;
+		if(!$type){
+			$type = substr($query, 0, strpos($query, ' '));
+		}
+
+		//	...
+		switch( strtolower($type) ){
+			case 'select':
+				$result = $statement->fetchAll(PDO::FETCH_ASSOC);
+				break;
+
+			case 'count':
+				$result = $statement->fetchAll(PDO::FETCH_ASSOC);
+				$result = $result[0]['COUNT(*)'];
 				break;
 
 			case 'insert':
@@ -187,8 +195,11 @@ class db extends OnePiece
 				$result = $statement->rowCount();
 				break;
 
-			default:
-				$result = $statement->fetchAll(PDO::FETCH_ASSOC);
+			case 'alter':
+			case 'grant':
+			case 'create':
+				$result = true;
+				break;
 		}
 
 		return $result;
