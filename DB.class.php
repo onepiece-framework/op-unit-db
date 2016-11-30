@@ -162,6 +162,11 @@ class db extends OnePiece
 		//	...
 		$this->_queries[] = $query;
 		if(!$statement = $this->_pdo->query($query)){
+			$errorinfo = $this->_pdo->errorInfo();
+			$state = $errorinfo[0];
+			$errno = $errorinfo[1];
+			$error = $errorinfo[2];
+			Notice::Set("[$state($errno)] $error");
 			return false;
 		}
 
