@@ -149,10 +149,9 @@ class db extends OnePiece
 	 * Execute sql query.
 	 *
 	 * @param  string $query
-	 * @param  string $type
 	 * @return boolean|integer|array
 	 */
-	function Query($query, $type=null)
+	function Query($query)
 	{
 		//	...
 		if(!$this->_pdo){
@@ -167,7 +166,7 @@ class db extends OnePiece
 		}
 
 		//	...
-		switch($type){
+		switch( $type = strtolower(substr($query, 0, strpos($query, ' '))) ){
 			case 'alter':
 			case 'grant':
 			case 'create':
