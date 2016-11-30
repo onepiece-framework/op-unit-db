@@ -174,7 +174,7 @@ class db extends OnePiece
 				break;
 
 			case 'insert':
-				$this->_pdo->lastInsertId(/* $name is necessary at PGSQL */);
+				$result = $this->_pdo->lastInsertId(/* $name is necessary at PGSQL */);
 				break;
 
 			case 'update':
