@@ -187,10 +187,6 @@ class db extends OnePiece
 				$result = $statement->rowCount();
 				break;
 
-			case 'count':
-				$result = $statement ->fetch(PDO::FETCH_ASSOC);
-				break;
-
 			default:
 				$result = $statement->fetchAll(PDO::FETCH_ASSOC);
 		}
