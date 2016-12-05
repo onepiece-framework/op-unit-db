@@ -177,6 +177,7 @@ class db extends OnePiece
 
 		//	...
 		switch( strtolower($type) ){
+			case 'show':
 			case 'select':
 				$result = $statement->fetchAll(PDO::FETCH_ASSOC);
 				break;
@@ -200,6 +201,9 @@ class db extends OnePiece
 			case 'create':
 				$result = true;
 				break;
+
+			default:
+				d($type);
 		}
 
 		return $result;
