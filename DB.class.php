@@ -112,34 +112,10 @@ class db extends OnePiece
 	}
 
 	/**
-	 * Get database names.
+	 * Get PDO instance.
 	 *
-	 * @return array
+	 * @return PDO
 	 */
-	function GetDatabase()
-	{
-		foreach($this->Query('SHOW DATABASES') as $record){
-			$result[] = $record['Database'];
-		}
-		return $result;
-	}
-
-	/**
-	 * Get table names.
-	 *
-	 * @param  string
-	 * @return array
-	 */
-	function GetTable($database)
-	{
-		$result = [];
-		$_database = $this->Quote($database);
-		foreach($this->Query("SHOW TABLES FROM {$_database}") as $record){
-			$result[] = $record['Tables_in_'.$database];
-		}
-		return $result;
-	}
-
 	function GetPDO()
 	{
 		return $this->_pdo;
