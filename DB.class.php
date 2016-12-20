@@ -100,6 +100,11 @@ class db extends OnePiece
 		$this->_driver = $driver;
 		$dsn	 = "{$driver}:host={$host};dbname={$database}";
 		$options[PDO::MYSQL_ATTR_INIT_COMMAND] = "SET NAMES '{$charset}'";
+		if( ifset( $args[PDO::MYSQL_ATTR_MULTI_STATEMENTS], true ) ){
+			if( defined('PDO::MYSQL_ATTR_MULTI_STATEMENTS') ){
+				$options[PDO::MYSQL_ATTR_MULTI_STATEMENTS] = false;
+			}
+		}
 
 		//	...
 		try{
