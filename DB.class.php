@@ -138,7 +138,7 @@ class db extends OnePiece
 	{
 		//	...
 		if(!$this->_pdo){
-			Notice::Set("Has not been instantiate PDO.");
+			Notice::Set("Has not been instantiate PDO.", debug_backtrace());
 			return false;
 		}
 
@@ -152,7 +152,7 @@ class db extends OnePiece
 			$state = $errorinfo[0];
 			$errno = $errorinfo[1];
 			$error = $errorinfo[2];
-			Notice::Set("[$state($errno)] $error");
+			Notice::Set("[$state($errno)] $error", debug_backtrace());
 			return false;
 		}
 
