@@ -89,7 +89,9 @@ class db extends OnePiece
 	{
 		//	...
 		foreach(['driver','host','database','user','password','charset'] as $key){
-			if( null === ${$key} = $args[$key]){
+			if( isset($args[$key]) ){
+				${$key} = $args[$key];
+			}else{
 				Notice::Set("Has not been set this key's value. ($key)");
 			}
 		}
