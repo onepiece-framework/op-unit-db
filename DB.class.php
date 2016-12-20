@@ -136,6 +136,9 @@ class db extends OnePiece
 		}
 
 		//	...
+		$query = trim($query);
+
+		//	...
 		$this->_queries[] = $query;
 		if(!$statement = $this->_pdo->query($query)){
 			$errorinfo = $this->_pdo->errorInfo();
