@@ -132,6 +132,26 @@ class db extends OnePiece
 	}
 
 	/**
+	 * Get last query.
+	 *
+	 * @return string
+	 */
+	function GetQuery()
+	{
+		return $this->_queries[count($this->_queries)];
+	}
+
+	/**
+	 * Get all queries.
+	 *
+	 * @return array
+	 */
+	function GetQueries()
+	{
+		return $this->_queries;
+	}
+
+	/**
 	 * Execute sql query.
 	 *
 	 * @param  string $query
