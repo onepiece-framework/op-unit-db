@@ -21,11 +21,11 @@
 class db extends OnePiece
 {
 	/**
-	 * Driver. (mysql, pgsql, sqlite)
+	 * Save connection configuration.
 	 *
 	 * @var string
 	 */
-	private $_driver;
+	private $_config;
 
 	/**
 	 * PDO instance handle.
@@ -42,6 +42,22 @@ class db extends OnePiece
 	private $_queries;
 
 	/**
+	 * ...
+	 */
+	function __sleep()
+	{
+		return ['_config','_queries'];
+	}
+
+	/**
+	 * ...
+	 */
+	function __wakeup()
+	{
+		D("Does not implemented yet.");
+	}
+
+	/**
 	 * Get quote character.
 	 *
 	 * @return array
@@ -54,12 +70,12 @@ class db extends OnePiece
 		}
 
 		//	...
-		switch( $this->_driver ){
+		switch( $this->_config['driver'] ){
 			case 'mysql':
 				$lf = $rg = '`';
 				break;
 			default:
-				d("undefined driver. ({$this->_driver})");
+				d("undefined driver. ({$this->_config['driver']})");
 				break;
 		}
 
@@ -85,22 +101,21 @@ class db extends OnePiece
 	 * @param  array
 	 * @return boolean
 	 */
-	function Connect($args)
+	function Connect($config)
 	{
 		//	...
 		foreach(['driver','host','database','user','password','charset'] as $key){
-			if( isset($args[$key]) ){
-				${$key} = $args[$key];
+			if( isset($config[$key]) ){
+				$this->_config[$key] = ${$key} = $config[$key];
 			}else{
 				Notice::Set("Has not been set this key's value. ($key)");
 			}
 		}
 
 		//	...
-		$this->_driver = $driver;
-		$dsn	 = "{$driver}:host={$host};dbname={$database}";
+		$dsn = "{$driver}:host={$host};dbname={$database}";
 		$options[PDO::MYSQL_ATTR_INIT_COMMAND] = "SET NAMES '{$charset}'";
-		if( ifset( $args[PDO::MYSQL_ATTR_MULTI_STATEMENTS], true ) ){
+		if( ifset( $config[PDO::MYSQL_ATTR_MULTI_STATEMENTS], true ) ){
 			if( defined('PDO::MYSQL_ATTR_MULTI_STATEMENTS') ){
 				$options[PDO::MYSQL_ATTR_MULTI_STATEMENTS] = false;
 			}
