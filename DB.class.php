@@ -84,18 +84,6 @@ class db extends OnePiece
 	}
 
 	/**
-	 * Quote key string.
-	 *
-	 * @param  string $val
-	 * @return string
-	 */
-	function Quote($val)
-	{
-		list($lf, $rg) = $this->_get_quoter();
-		return "{$lf}{$val}{$rg}";
-	}
-
-	/**
 	 * Database connection.
 	 *
 	 * @param  array
@@ -208,5 +196,17 @@ class db extends OnePiece
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Quote key string.
+	 *
+	 * @param  string $val
+	 * @return string
+	 */
+	function Quote($val)
+	{
+		list($lf, $rg) = $this->_get_quoter();
+		return "{$lf}{$val}{$rg}";
 	}
 }
