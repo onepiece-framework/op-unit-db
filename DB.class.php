@@ -122,6 +122,56 @@ class db extends OnePiece
 	}
 
 	/**
+	 * Quick Query Language.
+	 *
+	 * <pre>
+	 * //	Space is required.
+	 *
+	 * //	Basic SELECT
+	 * $value = 1;
+	 * $this->Quick("TABLE.column = $value"); // Equal
+	 * $this->Quick("TABLE.column > $value"); // Grater than
+	 * $this->Quick("TABLE.column > " . $value - 1); // Grater than equal
+	 * $this->Quick("TABLE.column != $value"); // Not equal
+	 *
+	 * //	Get single column
+	 * $this->Quick("score <- TABLE.date < $today");
+	 *
+	 * //	Limit
+	 * $this->Quick("score <- TABLE.date < $today", "limit=1");
+	 *
+	 * //	Order (default is ASC)
+	 * $this->Quick("score <- TABLE.date < $today", "limit=1, order=id timestamp");
+	 *
+	 * //	Order (DESC)
+	 * $this->Quick("score <- TABLE.date < $today", "limit=1, order=^asc desc^");
+	 *
+	 * //	Function
+	 * $this->Quick("sum(score) <- TABLE.date < $today");
+	 * </pre>
+	 *
+	 * @param  string $qql
+	 * @return array
+	 */
+	function Quick($qql, $option=null)
+	{
+		//	...
+		if(!class_exists('QQL')){
+			if(!include(__DIR__.'/QQL.class.php')){
+				return [];
+			}
+		}
+
+		//	...
+		if( $sql = QQL::Select($qql, $option, $this) ){
+			return $this->Query($sql);
+		}
+
+		//	...
+		return [];
+	}
+
+	/**
 	 * Get PDO instance.
 	 *
 	 * @return PDO
@@ -224,9 +274,10 @@ class db extends OnePiece
 	 * @param  string $val
 	 * @return string
 	 */
-	function Quote($val)
+	function Quote($str)
 	{
-		list($lf, $rg) = $this->_get_quoter();
-		return "{$lf}{$val}{$rg}";
+		list($l, $r) = $this->_get_quoter();
+		$str = str_replace([$l, $r], '', $str);
+		return $l.trim($str).$r;
 	}
 }
