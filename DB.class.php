@@ -9,8 +9,7 @@
  * @copyright Tomoaki Nagahara All right reserved.
  */
 
-/**
- * db
+/** DB
  *
  * @created   2016-11-28
  * @version   1.0
@@ -18,8 +17,13 @@
  * @author    Tomoaki Nagahara <tomoaki.nagahara@gmail.com>
  * @copyright Tomoaki Nagahara All right reserved.
  */
-class db extends OnePiece
+class DB
 {
+	/** trait
+	 *
+	 */
+	use OP_CORE;
+
 	/**
 	 * Save connection configuration.
 	 *
