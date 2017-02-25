@@ -117,8 +117,8 @@ class DB
 		try{
 			$this->_queries[] = $dsn;
 			$this->_pdo = new PDO($dsn, $user, $password, $options);
-		}catch(PDOException $e){
-			Notice::Set($e->getMessage());
+		}catch(Throwable $e){
+			Notice::Set($e->getMessage() . " ($dsn, $user)");
 		}
 
 		//	...
