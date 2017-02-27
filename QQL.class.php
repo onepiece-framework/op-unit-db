@@ -18,10 +18,54 @@
  * @author    Tomoaki Nagahara <tomoaki.nagahara@gmail.com>
  * @copyright Tomoaki Nagahara All right reserved.
  */
-class QQL extends OnePiece
+class QQL
 {
-	/**
-	 * Convert to SQL from QQL.
+	/** trait
+	 *
+	 */
+	use OP_CORE;
+
+	/** Parse option string.
+	 *
+	 * @param string $options
+	 */
+	static function _ParseOptionString($opt)
+	{
+		//	...
+		$result = ['','',''];
+
+		//	...
+		foreach(explode(',', $opt) as $option){
+			//	...
+			list($key,$val) = explode('=', $option);
+
+			//	...
+			switch( $key = trim($key) ){
+				case 'limit':
+					$result[0] = 'LIMIT '.(int)$val;
+					break;
+
+				case 'order':
+					if( $pos = strpos($val, ' ') ){
+						$field = substr($val, 0, $pos);
+						$order = substr($val, $pos);
+						$result[1] = "ORDER BY `{$field}` $order";
+					}else{
+						$result[1] = "ORDER BY `{$val}`";
+					}
+					break;
+
+				case 'offset':
+					$result[2] = 'OFFSET '.(int)$val;
+					break;
+			}
+		}
+
+		//	...
+		return $result;
+	}
+
+	/** Convert to SQL from QQL.
 	 *
 	 * @param  string $qql
 	 * @param  db     $db
@@ -108,6 +152,9 @@ class QQL extends OnePiece
 		}
 
 		//	...
-		return "SELECT $field FROM $table $where $limit $order $offset";
+		list($limit, $order, $offset) = self::_ParseOptionString($opt);
+
+		//	...
+		return "SELECT $field FROM $table $where $order $limit $offset";
 	}
 }

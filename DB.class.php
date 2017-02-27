@@ -24,45 +24,41 @@ class DB
 	 */
 	use OP_CORE;
 
-	/**
-	 * Save connection configuration.
+	/** Save connection configuration.
 	 *
 	 * @var string
 	 */
 	private $_config;
 
-	/**
-	 * PDO instance handle.
+	/** PDO instance handle.
 	 *
 	 * @var PDO
 	 */
 	private $_pdo;
 
-	/**
-	 * Stack execute queries.
+	/** Stack execute queries.
 	 *
 	 * @var array
 	 */
 	private $_queries;
 
-	/**
-	 * ...
+	/** sleep
+	 *
 	 */
 	function __sleep()
 	{
 		return ['_config','_queries'];
 	}
 
-	/**
-	 * ...
+	/** wakeup
+	 *
 	 */
 	function __wakeup()
 	{
 		D("Does not implemented yet.");
 	}
 
-	/**
-	 * Get quote character.
+	/** Get quote character.
 	 *
 	 * @return array
 	 */
@@ -87,8 +83,7 @@ class DB
 		return [$lf, $rg];
 	}
 
-	/**
-	 * Database connection.
+	/** Database connection.
 	 *
 	 * @param  array
 	 * @return boolean
@@ -125,58 +120,7 @@ class DB
 		return $this->_pdo ? true: false;
 	}
 
-	/**
-	 * Quick Query Language.
-	 *
-	 * <pre>
-	 * //	Space is required.
-	 *
-	 * //	Basic SELECT
-	 * $value = 1;
-	 * $this->Quick("TABLE.column = $value"); // Equal
-	 * $this->Quick("TABLE.column > $value"); // Grater than
-	 * $this->Quick("TABLE.column > " . $value - 1); // Grater than equal
-	 * $this->Quick("TABLE.column != $value"); // Not equal
-	 *
-	 * //	Get single column
-	 * $this->Quick("score <- TABLE.date < $today");
-	 *
-	 * //	Limit
-	 * $this->Quick("score <- TABLE.date < $today", "limit=1");
-	 *
-	 * //	Order (default is ASC)
-	 * $this->Quick("score <- TABLE.date < $today", "limit=1, order=id timestamp");
-	 *
-	 * //	Order (DESC)
-	 * $this->Quick("score <- TABLE.date < $today", "limit=1, order=^asc desc^");
-	 *
-	 * //	Function
-	 * $this->Quick("sum(score) <- TABLE.date < $today");
-	 * </pre>
-	 *
-	 * @param  string $qql
-	 * @return array
-	 */
-	function Quick($qql, $option=null)
-	{
-		//	...
-		if(!class_exists('QQL')){
-			if(!include(__DIR__.'/QQL.class.php')){
-				return [];
-			}
-		}
-
-		//	...
-		if( $sql = QQL::Select($qql, $option, $this) ){
-			return $this->Query($sql);
-		}
-
-		//	...
-		return [];
-	}
-
-	/**
-	 * Get PDO instance.
+	/** Get PDO instance.
 	 *
 	 * @return PDO
 	 */
@@ -185,18 +129,16 @@ class DB
 		return $this->_pdo;
 	}
 
-	/**
-	 * Get last query.
+	/** Get last query.
 	 *
 	 * @return string
 	 */
 	function GetQuery()
 	{
-		return $this->_queries[count($this->_queries)];
+		return $this->_queries[count($this->_queries)-1];
 	}
 
-	/**
-	 * Get all queries.
+	/** Get all queries.
 	 *
 	 * @return array
 	 */
@@ -205,8 +147,7 @@ class DB
 		return $this->_queries;
 	}
 
-	/**
-	 * Execute sql query.
+	/** Execute sql query.
 	 *
 	 * @param  string $query
 	 * @return boolean|integer|array
@@ -272,8 +213,56 @@ class DB
 		return $result;
 	}
 
-	/**
-	 * Quote key string.
+	/** Quick Query Language.
+	 *
+	 * <pre>
+	 * //	Space is required.
+	 *
+	 * //	Basic SELECT
+	 * $value = 1;
+	 * $this->Quick("TABLE.column = $value"); // Equal
+	 * $this->Quick("TABLE.column > $value"); // Grater than
+	 * $this->Quick("TABLE.column > " . $value - 1); // Grater than equal
+	 * $this->Quick("TABLE.column != $value"); // Not equal
+	 *
+	 * //	Get single column
+	 * $this->Quick("score <- TABLE.date < $today");
+	 *
+	 * //	Limit
+	 * $this->Quick("score <- TABLE.date < $today", "limit=1");
+	 *
+	 * //	Order (default is ASC)
+	 * $this->Quick("score <- TABLE.date < $today", "limit=1, order=id timestamp");
+	 *
+	 * //	Order (DESC)
+	 * $this->Quick("score <- TABLE.date < $today", "limit=1, order=^asc desc^");
+	 *
+	 * //	Function
+	 * $this->Quick("sum(score) <- TABLE.date < $today");
+	 * </pre>
+	 *
+	 * @param  string $qql
+	 * @return array
+	 */
+	function Quick($qql, $option=null)
+	{
+		//	...
+		if(!class_exists('QQL')){
+			if(!include(__DIR__.'/QQL.class.php')){
+				return [];
+			}
+		}
+
+		//	...
+		if( $sql = QQL::Select($qql, $option, $this) ){
+			return strpos($sql, ' LIMIT 1 ') ? $this->Query($sql)[0]: $this->Query($sql);
+		}
+
+		//	...
+		return [];
+	}
+
+	/** Quote key string.
 	 *
 	 * @param  string $val
 	 * @return string
