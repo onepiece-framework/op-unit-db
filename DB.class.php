@@ -184,6 +184,9 @@ class DB
 			case 'show':
 			case 'select':
 				$result = $statement->fetchAll(PDO::FETCH_ASSOC);
+				if( strpos($query.' ', ' LIMIT 1 ') and $result ){
+					$result = $result[0];
+				}
 				break;
 
 			case 'count':
@@ -255,7 +258,7 @@ class DB
 
 		//	...
 		if( $sql = QQL::Select($qql, $option, $this) ){
-			return strpos($sql, ' LIMIT 1 ') ? $this->Query($sql)[0]: $this->Query($sql);
+			return $this->Query($sql);
 		}
 
 		//	...
