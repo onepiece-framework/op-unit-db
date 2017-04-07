@@ -91,7 +91,7 @@ class DB
 	function Connect($config)
 	{
 		//	...
-		foreach(['driver','host','database','user','password','charset'] as $key){
+		foreach(['driver','host','user','password','charset'] as $key){
 			if( isset($config[$key]) ){
 				$this->_config[$key] = ${$key} = $config[$key];
 			}else{
@@ -100,12 +100,17 @@ class DB
 		}
 
 		//	...
-		$dsn = "{$driver}:host={$host};dbname={$database}";
+		$dsn = "{$driver}:host={$host}";
 		$options[PDO::MYSQL_ATTR_INIT_COMMAND] = "SET NAMES '{$charset}'";
 		if( ifset( $config[PDO::MYSQL_ATTR_MULTI_STATEMENTS], true ) ){
 			if( defined('PDO::MYSQL_ATTR_MULTI_STATEMENTS') ){
 				$options[PDO::MYSQL_ATTR_MULTI_STATEMENTS] = false;
 			}
+		}
+
+		//	...
+		if( isset($config['database']) ){
+			$dsn .= ";dbname={$config['database']}";
 		}
 
 		//	...
