@@ -30,6 +30,12 @@ class DB
 	 */
 	private $_config;
 
+	/** Could connection.
+	 *
+	 * @var boolean
+	 */
+	private $_connection;
+
 	/** PDO instance handle.
 	 *
 	 * @var PDO
@@ -130,12 +136,14 @@ class DB
 		try{
 			$this->_queries[] = $dsn;
 			$this->_pdo = new PDO($dsn, $user, $password, $options);
+			$this->_connection = true;
 		}catch(Throwable $e){
+			$this->_connection = false;
 			Notice::Set($e->getMessage() . " ($dsn, $user)");
 		}
 
 		//	...
-		return $this->_pdo ? true: false;
+		return $this->_connection;
 	}
 
 	/** Get PDO instance.
