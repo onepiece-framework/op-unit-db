@@ -101,12 +101,16 @@ class DB
 
 		//	...
 		$dsn = "{$driver}:host={$host}";
+
+		//	Character set.
 		$options[PDO::MYSQL_ATTR_INIT_COMMAND] = "SET NAMES '{$charset}'";
-		if( ifset( $config[PDO::MYSQL_ATTR_MULTI_STATEMENTS], true ) ){
-			if( defined('PDO::MYSQL_ATTR_MULTI_STATEMENTS') ){
+
+		//	Multi statement.
+	//	if( defined('PDO::MYSQL_ATTR_MULTI_STATEMENTS') ){
+			if( ifset( $config[PDO::MYSQL_ATTR_MULTI_STATEMENTS], true ) ){
 				$options[PDO::MYSQL_ATTR_MULTI_STATEMENTS] = false;
 			}
-		}
+	//	}
 
 		//	...
 		if( isset($config['database']) ){
