@@ -74,8 +74,9 @@ class DB
 			case 'mysql':
 				$lf = $rg = '`';
 				break;
+
 			default:
-				d("undefined driver. ({$this->_config['driver']})");
+				throw new Exception("This product has not been supported. ({$this->_config['driver']})");
 				break;
 		}
 
@@ -96,6 +97,7 @@ class DB
 				$this->_config[$key] = ${$key} = $config[$key];
 			}else{
 				Notice::Set("Has not been set this key's value. ($key)");
+				return false;
 			}
 		}
 
