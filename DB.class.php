@@ -113,6 +113,13 @@ class DB
 	//	}
 
 		//	...
+	//	if( defined('PDO::ATTR_PERSISTENT') ){
+			if( ifset( $config[PDO::ATTR_PERSISTENT], true ) ){
+				$options[PDO::ATTR_PERSISTENT] = true;
+			}
+	//	}
+
+		//	...
 		if( isset($config['database']) ){
 			$dsn .= ";dbname={$config['database']}";
 		}
