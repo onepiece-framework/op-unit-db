@@ -262,12 +262,7 @@ class DB
 		}
 
 		//	...
-		if( $sql = QQL::Select($qql, $option, $this) ){
-			return $this->Query($sql);
-		}
-
-		//	...
-		return [];
+		return QQL::Select($qql, $option, $this);
 	}
 
 	/** Quote key string.

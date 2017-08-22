@@ -99,7 +99,8 @@ class QQL
 	/** Convert to SQL from QQL.
 	 *
 	 * @param  string $qql
-	 * @param  db     $db
+	 * @param  string $opt
+	 * @param  DB     $_db
 	 * @return string $sql
 	 */
 	static function Select($qql, $opt, $_db)
@@ -183,9 +184,23 @@ class QQL
 		}
 
 		//	...
-		list($limit, $order, $offset) = self::_ParseOptionString($opt);
+		list($limit, $order, $offset) = self::_ParseOption($opt);
 
 		//	...
-		return "SELECT $field FROM $table $where $order $limit $offset";
+		$query = "SELECT $field FROM $table $where $order $limit $offset";
+
+		//	...
+		$limit = (int)substr($limit, strpos($limit, ' ')+1);
+
+		//	...
+		$field = substr($field, 1, -1);
+
+		//	...
+		if(!$record = $_db->Query($query)){
+			return null;
+		}
+
+		//	...
+		return ($limit === 1 and $field !== '*') ? $record[$field]: $record;
 	}
 }
