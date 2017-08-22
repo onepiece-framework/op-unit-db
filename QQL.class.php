@@ -25,21 +25,22 @@ class QQL
 	 */
 	use OP_CORE;
 
-	/** Parse option string.
+	/** Parse option.
 	 *
 	 * @param string $options
 	 */
-	static function _ParseOptionString($opt)
+	static function _ParseOption($options)
 	{
+		//	...
+		if( gettype($options) === 'string' ){
+			$options = self::_ParseOptionString($options);
+		}
+
 		//	...
 		$result = ['','',''];
 
 		//	...
-		foreach(explode(',', $opt) as $option){
-			//	...
-			list($key,$val) = explode('=', $option);
-
-			//	...
+		foreach( $options as $key => $val ){
 			switch( $key = trim($key) ){
 				case 'limit':
 					$result[0] = 'LIMIT '.(int)$val;
@@ -59,6 +60,36 @@ class QQL
 					$result[2] = 'OFFSET '.(int)$val;
 					break;
 			}
+		}
+
+		//	...
+		return $result;
+	}
+
+	/** Parse option string.
+	 *
+	 * @param string $options
+	 */
+	static function _ParseOptionString($options)
+	{
+		//	...
+		$result = null;
+
+		//	...
+		foreach( explode(',', $options) as $option ){
+			//	...
+			$option = trim($option);
+
+			//	...
+			if( $pos = strpos($option, '=') ){
+				$key = substr($option, 0, $pos);
+				$val = substr($option, $pos +1);
+			}else{
+				continue;
+			}
+
+			//	...
+			$result[$key] = $val;
 		}
 
 		//	...
