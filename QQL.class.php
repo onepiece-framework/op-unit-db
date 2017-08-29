@@ -116,7 +116,18 @@ class QQL
 		//	field
 		if( $pos = strpos($qql, '<-') ){
 			list($field, $qql) = explode('<-', $qql);
-			$field = $_db->Quote($field);
+			if( strpos($field, ',') ){
+				//	Many fields.
+				$fields = explode(',', $field);
+				$join   = [];
+				foreach( $fields as $temp ){
+					$join[] = $_db->Quote($temp);
+				}
+				$field = join(',', $join);
+			}else{
+				//	Single field.
+				$field = $_db->Quote($field);
+			}
 		}
 
 		//	...
@@ -193,14 +204,11 @@ class QQL
 		$limit = (int)substr($limit, strpos($limit, ' ')+1);
 
 		//	...
-		$field = substr($field, 1, -1);
-
-		//	...
 		if(!$record = $_db->Query($query)){
 			return null;
 		}
 
 		//	...
-		return ($limit === 1 and $field !== '*') ? $record[$field]: $record;
+		return $record;
 	}
 }
