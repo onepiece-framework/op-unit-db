@@ -265,10 +265,10 @@ class DB
 	 * @param  string $qql
 	 * @return array
 	 */
-	function Quick($qql, $option=null)
+	function Quick($qql, $option=[])
 	{
 		//	...
-		if(!class_exists('QQL')){
+		if(!class_exists('QQL', false)){
 			if(!include(__DIR__.'/QQL.class.php')){
 				return [];
 			}
