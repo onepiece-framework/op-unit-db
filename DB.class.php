@@ -90,13 +90,19 @@ class DB
 		return [$lf, $rg];
 	}
 
-	/** Database connection.
+	/** Generate DSN for MySQL.
 	 *
-	 * @param  array
-	 * @return boolean
+	 * @param  $config array
+	 * @return $dsn    string
 	 */
-	function Connect($config)
+	private function _GetDsnMySQL($config, &$dsn, &$user, &$password, &$options)
 	{
+		//	...
+		if(!defined('PDO::MYSQL_ATTR_INIT_COMMAND') ){
+			Notice::Set("Please install MySQL driver for PHP.");
+			return false;
+		}
+
 		//	...
 		foreach(['driver','host','user','password','charset'] as $key){
 			if( isset($config[$key]) ){
@@ -130,6 +136,30 @@ class DB
 		//	...
 		if( isset($config['database']) ){
 			$dsn .= ";dbname={$config['database']}";
+		}
+
+		//	...
+		return $dsn;
+	}
+
+	/** Database connection.
+	 *
+	 * @param  array
+	 * @return boolean
+	 */
+	function Connect($config)
+	{
+		//	...
+		switch( $config['driver'] ){
+				case 'mysql':
+					if(!self::_GetDsnMySQL($config, $dsn, $user, $password, $options) ){
+						return false;
+					}
+					break;
+
+				default:
+					Notice::Set("This driver has not been supported yet. ($driver)");
+					return false;
 		}
 
 		//	...
