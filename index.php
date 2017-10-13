@@ -8,4 +8,9 @@
  * @author    Tomoaki Nagahara <tomoaki.nagahara@gmail.com>
  * @copyright Tomoaki Nagahara All right reserved.
  */
-include(__DIR__.'/DB.class.php');
+spl_autoload_register(function ($name){
+	$path = __DIR__."/{$name}.class.php";
+	if( file_exists($path) ){
+		include($path);
+	}
+});
