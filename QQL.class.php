@@ -29,7 +29,7 @@ class QQL
 	 *
 	 * @param string $options
 	 */
-	static function _ParseOption($options)
+	static function _ParseOption($options=[])
 	{
 		//	...
 		if( gettype($options) === 'string' ){
