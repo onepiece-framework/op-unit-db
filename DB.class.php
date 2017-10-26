@@ -97,13 +97,13 @@ class DB
 	 */
 	private function _GetDsnMySQL($config, &$dsn, &$user, &$password, &$options)
 	{
-		//	...
+		//	Error check. (错误检查, 錯誤檢查)
 		if(!defined('PDO::MYSQL_ATTR_INIT_COMMAND') ){
 			Notice::Set("Please install MySQL driver for PHP.");
 			return false;
 		}
 
-		//	...
+		//	Initialize variable. (初始化变量, 初始化變量)
 		foreach(['driver','host','user','password','charset'] as $key){
 			if( isset($config[$key]) ){
 				$this->_config[$key] = ${$key} = $config[$key];
@@ -113,33 +113,25 @@ class DB
 			}
 		}
 
-		//	...
+		//	Product and server. (产品和服务器, 產品和服務器)
 		$dsn = "{$driver}:host={$host}";
 
-		//	Character set.
+		//	Character set. (指定字符代码, 指定字符代碼)
 		$options[PDO::MYSQL_ATTR_INIT_COMMAND] = "SET NAMES '{$charset}'";
 
-		//	Multi statement.
-	//	if( defined('PDO::MYSQL_ATTR_MULTI_STATEMENTS') ){
-			if( ifset( $config[PDO::MYSQL_ATTR_MULTI_STATEMENTS], true ) ){
-				$options[PDO::MYSQL_ATTR_MULTI_STATEMENTS] = false;
-			}
-	//	}
+		//	Multi statement. (多个指令, 多個指令)
+		$options[PDO::MYSQL_ATTR_MULTI_STATEMENTS] = false;
 
-		//	...
-	//	if( defined('PDO::ATTR_PERSISTENT') ){
-			if( ifset( $config[PDO::ATTR_PERSISTENT], true ) ){
-				$options[PDO::ATTR_PERSISTENT] = true;
-			}
-	//	}
+		//	Persistent connect. (持续连接, 持續連接)
+		$options[PDO::ATTR_PERSISTENT] = false;
 
-		//	...
+		//	Select the database. (选择数据库, 選擇數據庫)
 		if( isset($config['database']) ){
 			$dsn .= ";dbname={$config['database']}";
 		}
 
 		//	...
-		return $dsn;
+		return true;
 	}
 
 	/** Database connection.
